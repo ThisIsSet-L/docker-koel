@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine:3.3
 MAINTAINER Etopian Inc. <contact@etopian.com>
 
 
@@ -55,8 +55,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 
 RUN su nginx -c "git clone https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs &&\
+    git checkout v1.1.2 && \
     npm install &&\
-    composer config github-oauth.github.com  2084a22e9bdb38f94d081ab6f2d5fd339b5292e8 &&\
+    composer config github-oauth.github.com 2084a22e9bdb38f94d081ab6f2d5fd339b5292e8 &&\
     composer install"
 
 #clean up
