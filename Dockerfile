@@ -36,7 +36,6 @@ ENV TERM="xterm" \
     ADMIN_PASSWORD=""\
     APP_DEBUG=false\
     AP_ENV=production
-    FFMPEG_PATH=/usr/bin/ffmpeg
 
 VOLUME ["/DATA/music"]
 
@@ -48,6 +47,7 @@ RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/php.ini && \
 ADD files/nginx.conf /etc/nginx/
 ADD files/php-fpm.conf /etc/php/
 ADD files/run.sh /
+
 RUN chmod +x /run.sh && chown -R nginx:nginx /DATA
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer 
@@ -55,10 +55,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 
 RUN su nginx -c "git clone https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs && \
-    git checkout v2.1.0 && \
+    git checkout v3.1.1 && \
     npm install && \
     composer config github-oauth.github.com 2084a22e9bdb38f94d081ab6f2d5fd339b5292e8 &&\
     composer install"
+
+
+
+ADD files/watch.sh /DATA/htdocs/ 
+
 
 #clean up
 RUN apk del --purge git build-base python nodejs

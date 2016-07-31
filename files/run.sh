@@ -17,3 +17,10 @@ mkdir -p /DATA/logs/nginx
 mkdir -p /tmp/nginx
 chown nginx /tmp/nginx
 nginx
+
+# start watch.sh
+chmod +x watch
+./watch &
+# bg
+# disown -h
+
