@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine:edge
 MAINTAINER Etopian Inc. <contact@etopian.com>
 
 
@@ -15,13 +15,13 @@ LABEL   devoply.type="site" \
 
 RUN apk update \
     && apk add bash less vim nginx ca-certificates nodejs \
-    php-fpm php-json php-zlib php-xml php-pdo php-phar php-openssl \
-    php-pdo_mysql php-mysqli \
-    php-gd php-iconv php-mcrypt \
-    php-mysql php-curl php-opcache php-ctype php-apcu \
-    php-intl php-bcmath php-dom php-xmlreader php-xsl mysql-client \
+    php5-fpm php5-json php5-zlib php5-xml php5-pdo php5-phar php5-openssl \
+    php5-pdo_mysql php5-mysqli \
+    php5-gd php5-iconv php5-mcrypt \
+    php5-mysql php5-curl php5-opcache php5-ctype php5-apcu \
+    php5-intl php5-bcmath php5-dom php5-xmlreader php5-xsl mysql-client \
     git build-base python \
-    ffmpeg inotify-tools \
+    ffmpeg inotify-tools sudo curl \
     && apk add -u musl
 
 RUN rm -rf /var/cache/apk/*
@@ -40,9 +40,10 @@ ENV TERM="xterm" \
 VOLUME ["/DATA/music"]
 
 
-RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/php.ini && \
-    sed -i 's/nginx:x:100:101:Linux User,,,:\/var\/www\/localhost\/htdocs:\/sbin\/nologin/nginx:x:100:101:Linux User,,,:\/DATA:\/bin\/bash/g' /etc/passwd && \
-    sed -i 's/nginx:x:100:101:Linux User,,,:\/var\/www\/localhost\/htdocs:\/sbin\/nologin/nginx:x:100:101:Linux User,,,:\/DATA:\/bin\/bash/g' /etc/passwd-
+RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php5/php.ini && \
+sed -i 's/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:Linux User,,,:\/DATA:\/bin\/bash/g' /etc/passwd && \
+sed -i 's/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:Linux User,,,:\/DATA:\/bin\/bash/g' /etc/passwd-
+ 
 
 ADD files/nginx.conf /etc/nginx/
 ADD files/php-fpm.conf /etc/php/
@@ -53,17 +54,14 @@ RUN chmod +x /run.sh && chown -R nginx:nginx /DATA
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer 
 
 
-RUN su nginx -c "git clone https://github.com/phanan/koel /DATA/htdocs &&\
+RUN su nginx -c "git clone --branch v3.1.1 --depth 1 https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs && \
-    git checkout v3.1.1 && \
     npm install && \
-    composer config github-oauth.github.com 2084a22e9bdb38f94d081ab6f2d5fd339b5292e8 &&\
+    composer config github-oauth.github.com de3535512dc7a8fdb0fe3d43f3f53fa991b1dc0b &&\
     composer install"
 
 
-
 ADD files/watch.sh /DATA/htdocs/ 
-
 
 #clean up
 RUN apk del --purge git build-base python nodejs

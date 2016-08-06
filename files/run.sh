@@ -12,15 +12,20 @@ fi
 mkdir -p /DATA/logs/php-fpm
 php-fpm
 
+# start watch.sh
+chmod +x watch.sh
+./watch.sh &
+# bg
+# disown -h
+
+#specific to lavarel
+cd /DATA/htdocs
+php artisan key:generate
+php artisan koel:generate-jwt-secret
+
 # start nginx
 mkdir -p /DATA/logs/nginx
 mkdir -p /tmp/nginx
 chown nginx /tmp/nginx
 nginx
-
-# start watch.sh
-chmod +x watch
-./watch &
-# bg
-# disown -h
 
