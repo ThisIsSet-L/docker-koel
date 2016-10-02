@@ -1,8 +1,6 @@
 FROM alpine:edge
 MAINTAINER Etopian Inc. <contact@etopian.com>
 
-
-
 LABEL   devoply.type="site" \
         devoply.cms="koel" \
         devoply.framework="laravel" \
@@ -24,8 +22,6 @@ RUN apk update \
     ffmpeg inotify-tools sudo curl \
     && apk add -u musl
 
-RUN rm -rf /var/cache/apk/*
-
 ENV TERM="xterm" \
     DB_HOST="172.17.0.1" \
     DB_DATABASE="" \
@@ -46,7 +42,7 @@ sed -i 's/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:10
  
 
 ADD files/nginx.conf /etc/nginx/
-ADD files/php-fpm.conf /etc/php/
+ADD files/php-fpm.conf /etc/php5/
 ADD files/run.sh /
 
 RUN chmod +x /run.sh && chown -R nginx:nginx /DATA
@@ -54,23 +50,22 @@ RUN chmod +x /run.sh && chown -R nginx:nginx /DATA
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer 
 
 
-RUN su nginx -c "git clone --branch v3.1.1 --depth 1 https://github.com/phanan/koel /DATA/htdocs &&\
+RUN su nginx -c "git clone --branch v3.1.1 https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs && \
     npm install && \
-    composer config github-oauth.github.com de3535512dc7a8fdb0fe3d43f3f53fa991b1dc0b &&\
+    composer config github-oauth.github.com 11...963 &&\
     composer install"
 
 
 ADD files/watch.sh /DATA/htdocs/ 
 
 #clean up
-RUN apk del --purge git build-base python nodejs
+RUN apk del --purge git build-base python nodejs && \
+  rm -rf /var/cache/apk/*
 
 COPY files/.env /DATA/htdocs/.env
 
 RUN chown nginx:nginx /DATA/htdocs/.env
-
-#RUN su nginx -c "cd /DATA/htdocs && php artisan init"
 
 EXPOSE 80
 CMD ["/run.sh"]
