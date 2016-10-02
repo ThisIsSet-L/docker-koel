@@ -50,7 +50,7 @@ RUN chmod +x /run.sh && chown -R nginx:nginx /DATA
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer 
 
 
-RUN su nginx -c "git clone --branch v3.1.1 https://github.com/phanan/koel /DATA/htdocs &&\
+RUN su nginx -c "git clone --branch v3.3.1 https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs && \
     npm install && \
     composer config github-oauth.github.com 11...963 &&\
