@@ -12,13 +12,12 @@ LABEL   devoply.type="site" \
 
 
 RUN apk update \
-    && apk add --no-cache bash less vim nginx ca-certificates nodejs \
+    && apk add --no-cache bash less vim nginx ca-certificates \
     php5-fpm php5-json php5-zlib php5-xml php5-pdo php5-phar php5-openssl \
     php5-pdo_mysql php5-mysqli \
     php5-gd php5-iconv php5-mcrypt \
     php5-mysql php5-curl php5-opcache php5-ctype php5-apcu php5-exif\
     php5-intl php5-bcmath php5-dom php5-xmlreader php5-xsl mysql-client \
-    git build-base python \
     ffmpeg inotify-tools sudo curl \
     && apk add -u --no-cache musl
 
@@ -51,17 +50,16 @@ RUN chmod +x /run.sh && chown -R nginx:nginx /DATA
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer 
 
 
-RUN su nginx -c "git clone --branch v3.3.1 https://github.com/phanan/koel /DATA/htdocs &&\
+RUN apk add --no-cache git build-base python nodejs && \
+    su nginx -c "git clone --branch v3.3.1 https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs && \
     npm install && \
     composer config github-oauth.github.com 11...963 &&\
-    composer install"
+    composer install" && \
+    apk del --purge git build-base python nodejs
 
 
 ADD files/watch.sh /DATA/htdocs/ 
-
-#clean up
-RUN apk del --purge git build-base python nodejs
 
 COPY files/.env /DATA/htdocs/.env
 
