@@ -12,7 +12,7 @@ LABEL   devoply.type="site" \
 
 
 RUN apk update \
-    && apk add bash less vim nginx ca-certificates nodejs \
+    && apk add --no-cache bash less vim nginx ca-certificates nodejs \
     php5-fpm php5-json php5-zlib php5-xml php5-pdo php5-phar php5-openssl \
     php5-pdo_mysql php5-mysqli \
     php5-gd php5-iconv php5-mcrypt \
@@ -20,7 +20,7 @@ RUN apk update \
     php5-intl php5-bcmath php5-dom php5-xmlreader php5-xsl mysql-client \
     git build-base python \
     ffmpeg inotify-tools sudo curl \
-    && apk add -u musl
+    && apk add -u --no-cache musl
 
 ENV TERM="xterm" \
     DB_HOST="172.17.0.1" \
@@ -61,8 +61,7 @@ RUN su nginx -c "git clone --branch v3.3.1 https://github.com/phanan/koel /DATA/
 ADD files/watch.sh /DATA/htdocs/ 
 
 #clean up
-RUN apk del --purge git build-base python nodejs && \
-  rm -rf /var/cache/apk/*
+RUN apk del --purge git build-base python nodejs
 
 COPY files/.env /DATA/htdocs/.env
 
