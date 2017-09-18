@@ -54,7 +54,7 @@ RUN apk add --no-cache git build-base python nodejs && \
     su nginx -c "git clone --branch v3.5.5 https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs && \
     npm install && \
-    composer config github-oauth.github.com f83d3b4938aaaa14f3498491c82fd5f34a1b71e1 &&\
+    composer config github-oauth.github.com 2084a22e9bdb38f94d081ab6f2d5fd339b5292e8 &&\
     composer install" && \
     apk del --purge git build-base python nodejs
 
