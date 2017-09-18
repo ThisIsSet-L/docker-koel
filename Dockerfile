@@ -51,7 +51,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 
 
 RUN apk add --no-cache git build-base python nodejs && \
-    su nginx -c "git clone --branch v3.6.0 https://github.com/phanan/koel /DATA/htdocs &&\
+    su nginx -c "git clone --branch v3.5.5 https://github.com/phanan/koel /DATA/htdocs &&\
     cd /DATA/htdocs && \
     npm install && \
     composer config github-oauth.github.com 11...963 &&\
